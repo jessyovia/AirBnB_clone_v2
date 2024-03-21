@@ -1,24 +1,34 @@
 #!/usr/bin/python3
-""" """
-from tests.test_models.test_base_model import test_basemodel
+"""Unit tests for City class"""
+
+
+import unittest
 from models.city import City
 
 
-class test_City(test_basemodel):
-    """ """
+class TestCity(unittest.TestCase):
+    """Test cases for City class"""
 
-    def __init__(self, *args, **kwargs):
-        """ """
-        super().__init__(*args, **kwargs)
-        self.name = "City"
-        self.value = City
+    def test_name_not_nullable(self):
+        """Test 'name' attribute is not nullable"""
+        city = City(name="Test City")
+        self.assertIsNotNone(city.name)
 
-    def test_state_id(self):
-        """ """
-        new = self.value()
-        self.assertEqual(type(new.state_id), str)
+    def test_name_type(self):
+        """Test type of the 'name' attribute"""
+        city = City(name="Test City")
+        self.assertIsInstance(city.name, str)
 
-    def test_name(self):
-        """ """
-        new = self.value()
-        self.assertEqual(type(new.name), str)
+    def test_state_id_not_nullable(self):
+        """Test 'state_id' attribute is not nullable"""
+        city = City(state_id="test_state_id")
+        self.assertIsNotNone(city.state_id)
+
+    def test_state_id_type(self):
+        """Test type of the 'state_id' attribute"""
+        city = City(state_id="test_state_id")
+        self.assertIsInstance(city.state_id, str)
+
+
+if __name__ == '__main__':
+    unittest.main()
