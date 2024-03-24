@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 """ Test delete feature
 """
-from models.engine.db_storage import DBStorage
+from models.engine.file_storage import FileStorage
 from models.state import State
 
-db_storage = DBStorage()
+fs = FileStorage()
 
 # All States
-all_states = db_storage.all(State)
+all_states = fs.all(State)
 print("All States: {}".format(len(all_states.keys())))
 for state_key in all_states.keys():
     print(all_states[state_key])
@@ -15,12 +15,12 @@ for state_key in all_states.keys():
 # Create a new State
 new_state = State()
 new_state.name = "California"
-db_storage.new(new_state)
-db_storage.save()
+fs.new(new_state)
+fs.save()
 print("New State: {}".format(new_state))
 
 # All States
-all_states = db_storage.all(State)
+all_states = fs.all(State)
 print("All States: {}".format(len(all_states.keys())))
 for state_key in all_states.keys():
     print(all_states[state_key])
@@ -28,21 +28,21 @@ for state_key in all_states.keys():
 # Create another State
 another_state = State()
 another_state.name = "Nevada"
-db_storage.new(another_state)
-db_storage.save()
+fs.new(another_state)
+fs.save()
 print("Another State: {}".format(another_state))
 
 # All States
-all_states = db_storage.all(State)
+all_states = fs.all(State)
 print("All States: {}".format(len(all_states.keys())))
 for state_key in all_states.keys():
     print(all_states[state_key])
 
 # Delete the new State
-db_storage.delete(new_state)
+fs.delete(new_state)
 
 # All States
-all_states = db_storage.all(State)
+all_states = fs.all(State)
 print("All States: {}".format(len(all_states.keys())))
 for state_key in all_states.keys():
     print(all_states[state_key])
