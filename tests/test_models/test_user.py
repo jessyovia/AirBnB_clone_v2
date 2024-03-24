@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Defines unittests for user.py"""
+"""This defines unittests for user.py"""
 
 
 import unittest

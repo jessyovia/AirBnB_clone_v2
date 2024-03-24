@@ -1,16 +1,16 @@
 #!/usr/bin/python3
-"""Defines unittests for models/engine/file_storage.py"""
+"""Defines unittests for models/base_model.py"""
+
 
 import unittest
 import os
-from models.engine.file_storage import FileStorage
 from models.base_model import BaseModel
 from datetime import datetime
 import models
 
 
-class TestFileStorage(unittest.TestCase):
-    """Test cases for the FileStorage class"""
+class TestBaseModel(unittest.TestCase):
+    """Test cases for the BaseModel class"""
 
     def setUp(self):
         """Set up test environment"""
@@ -26,57 +26,73 @@ class TestFileStorage(unittest.TestCase):
         except FileNotFoundError:
             pass
 
-    def test_all_method(self):
-        """Test all method returns dictionary"""
-        storage = FileStorage()
-        all_objs = storage.all()
-        self.assertIsInstance(all_objs, dict)
-
-    def test_new_method(self):
-        """Test new method adds object to __objects"""
-        storage = FileStorage()
+    def test_instance_creation(self):
+        """Test creation of BaseModel instance"""
         model = BaseModel()
-        storage.new(model)
-        self.assertIn("BaseModel." + model.id, storage.all().keys())
+        self.assertIsInstance(model, BaseModel)
+
+    def test_id_is_string(self):
+        """Test id attribute is a string"""
+        model = BaseModel()
+        self.assertIsInstance(model.id, str)
+
+    def test_created_at_is_datetime(self):
+        """Test created_at attribute is a datetime"""
+        model = BaseModel()
+        self.assertIsInstance(model.created_at, datetime)
+
+    def test_updated_at_is_datetime(self):
+        """Test updated_at attribute is a datetime"""
+        model = BaseModel()
+        self.assertIsInstance(model.updated_at, datetime)
 
     def test_save_method(self):
-        """Test save method saves objects to file"""
-        storage = FileStorage()
+        """Test save method updates updated_at"""
         model = BaseModel()
-        storage.new(model)
-        storage.save()
-        self.assertTrue(os.path.exists("file.json"))
+        original_updated_at = model.updated_at
+        model.save()
+        self.assertNotEqual(original_updated_at, model.updated_at)
 
-    def test_reload_method(self):
-        """Test reload method loads objects from file"""
-        storage = FileStorage()
+    def test_to_dict_method(self):
+        """Test to_dict method returns dictionary"""
         model = BaseModel()
-        storage.new(model)
-        storage.save()
-        storage.reload()
-        all_objs = storage.all()
-        self.assertIn("BaseModel." + model.id, all_objs.keys())
+        model_dict = model.to_dict()
+        self.assertIsInstance(model_dict, dict)
 
-    def test_save_and_reload(self):
-        """Test save and reload methods together"""
-        storage1 = FileStorage()
-        model1 = BaseModel()
-        storage1.new(model1)
-        storage1.save()
-
-        storage2 = FileStorage()
-        storage2.reload()
-        all_objs = storage2.all()
-        self.assertIn("BaseModel." + model1.id, all_objs.keys())
-
-    def test_delete_method(self):
-        """Test delete method deletes object from __objects"""
-        storage = FileStorage()
+    def test_to_dict_contains_classname(self):
+        """Test to_dict method contains __class__ key with class name"""
         model = BaseModel()
-        storage.new(model)
-        storage.delete(model)
-        self.assertNotIn("BaseModel." + model.id, storage.all().keys())
+        model_dict = model.to_dict()
+        self.assertIn("__class__", model_dict)
+        self.assertEqual(model_dict["__class__"], "BaseModel")
+
+    def test_to_dict_datetime_format(self):
+        """Test to_dict method returns correct datetime format"""
+        model = BaseModel()
+        model_dict = model.to_dict()
+        self.assertEqual(model.created_at.isoformat(),
+                         model_dict["created_at"])
+        self.assertEqual(model.updated_at.isoformat(),
+                         model_dict["updated_at"])
+
+    def test_to_dict_method_excludes_sa_instance_state(self):
+        """Test to_dict method excludes _sa_instance_state key"""
+        model = BaseModel()
+        model_dict = model.to_dict()
+        self.assertNotIn("_sa_instance_state", model_dict)
+
+    def test_to_dict_method_includes_custom_attributes(self):
+        """Test to_dict method includes custom attributes"""
+        model = BaseModel()
+        model.name = "Test"
+        model.number = 123
+        model_dict = model.to_dict()
+        self.assertIn("name", model_dict)
+        self.assertIn("number", model_dict)
+        self.assertEqual(model_dict["name"], "Test")
+        self.assertEqual(model_dict["number"], 123)
 
 
 if __name__ == '__main__':
     unittest.main()
+

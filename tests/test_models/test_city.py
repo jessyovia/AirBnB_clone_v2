@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Unit tests for City class"""
+"""The Unit tests for City class"""
 
 
 import unittest
