@@ -1,4 +1,3 @@
-
 #!/usr/bin/env bash
 # Install and Start Nginx with the updated config
 
@@ -32,4 +31,3 @@ server {
 sudo bash -c "echo '$SERVER_CONFIG' > /etc/nginx/sites-available/default"
 
 sudo service nginx restart
-
